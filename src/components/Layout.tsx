@@ -1,6 +1,6 @@
 
 import React from "react";
-import { FileExport } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface LayoutProps {
@@ -19,7 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onExport }) => {
             onClick={onExport}
             className="flex items-center gap-2"
           >
-            <FileExport size={18} />
+            <FileDown size={18} />
             Export to Excel
           </Button>
         </div>
