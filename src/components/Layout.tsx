@@ -2,6 +2,7 @@
 import React from "react";
 import { FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,23 +10,26 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, onExport }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="min-h-screen bg-design-lightgray">
       <header className="bg-white border-b border-border shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-design-blue">Design Task Diary</h1>
+        <div className="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
+          <h1 className="text-xl md:text-2xl font-bold text-design-blue">Design Task Diary</h1>
           <Button 
             variant="outline" 
             onClick={onExport}
             className="flex items-center gap-2"
+            size={isMobile ? "sm" : "default"}
           >
-            <FileDown size={18} />
+            <FileDown size={isMobile ? 16 : 18} />
             Export to Excel
           </Button>
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-6 md:py-8 max-w-full overflow-x-hidden">
         {children}
       </main>
       

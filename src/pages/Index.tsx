@@ -8,9 +8,11 @@ import DailySummary from "@/components/DailySummary";
 import { exportTasksToExcel } from "@/utils/exportToExcel";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const isMobile = useIsMobile();
 
   // Load tasks from localStorage on initial render
   useEffect(() => {
@@ -57,12 +59,12 @@ const Index = () => {
 
   return (
     <Layout onExport={handleExport}>
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="space-y-8">
+      <div className={`flex flex-col ${!isMobile ? 'md:grid md:grid-cols-2' : ''} gap-6 md:gap-8`}>
+        <div className="space-y-6 md:space-y-8 w-full">
           <TaskForm onSaveTask={handleSaveTask} />
           <DailySummary tasks={tasks} />
         </div>
-        <div>
+        <div className="w-full">
           <TaskList tasks={tasks} />
         </div>
       </div>

@@ -13,6 +13,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TaskFormProps {
   onSaveTask: (task: TaskFormData) => void;
@@ -25,6 +26,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
   const [taskType, setTaskType] = useState("");
   const [timeSpent, setTimeSpent] = useState("");
   const [notes, setNotes] = useState("");
+  const isMobile = useIsMobile();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,12 +67,12 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
 
   return (
     <Card className="w-full animate-fade-in">
-      <CardHeader>
-        <CardTitle className="text-design-blue">Record Design Task</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-design-blue text-xl">Record Design Task</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-4 flex flex-col w-full">
+          <div className="space-y-2 w-full">
             <Label htmlFor="date">Date</Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -85,7 +87,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
                   {date ? format(date, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className={`w-auto p-0 ${isMobile ? 'max-w-[280px]' : ''}`}>
                 <Calendar
                   mode="single"
                   selected={date}
@@ -96,7 +98,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
             </Popover>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="project">Project Name*</Label>
             <Input
               id="project"
@@ -104,10 +106,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
               onChange={(e) => setProject(e.target.value)}
               placeholder="e.g., Website Redesign"
               required
+              className="w-full"
             />
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="taskName">Task Name*</Label>
             <Input
               id="taskName"
@@ -115,13 +118,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
               onChange={(e) => setTaskName(e.target.value)}
               placeholder="e.g., Create Homepage Wireframes"
               required
+              className="w-full"
             />
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="taskType">Task Type*</Label>
             <Select value={taskType} onValueChange={setTaskType} required>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select task type" />
               </SelectTrigger>
               <SelectContent>
@@ -134,7 +138,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
             </Select>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="timeSpent">Time Spent (hours)*</Label>
             <Input
               id="timeSpent"
@@ -145,10 +149,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
               onChange={(e) => setTimeSpent(e.target.value)}
               placeholder="e.g., 2.5"
               required
+              className="w-full"
             />
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
@@ -156,10 +161,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add any additional details about the task..."
               rows={3}
+              className="w-full"
             />
           </div>
           
-          <Button type="submit" className="w-full">Save Task</Button>
+          <Button type="submit" className="w-full mt-2">Save Task</Button>
         </form>
       </CardContent>
     </Card>
