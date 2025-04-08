@@ -42,6 +42,14 @@ const Index = () => {
     setTasks((prevTasks) => [newTask, ...prevTasks]);
   };
 
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks((prevTasks) => 
+      prevTasks.map((task) => 
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
+  };
+
   const handleExport = () => {
     if (tasks.length === 0) {
       toast.error("No tasks to export");
@@ -65,7 +73,10 @@ const Index = () => {
           <DailySummary tasks={tasks} />
         </div>
         <div className="w-full">
-          <TaskList tasks={tasks} />
+          <TaskList 
+            tasks={tasks} 
+            onUpdateTask={handleUpdateTask}
+          />
         </div>
       </div>
     </Layout>
