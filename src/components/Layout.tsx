@@ -13,19 +13,21 @@ const Layout: React.FC<LayoutProps> = ({ children, onExport }) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className="min-h-screen bg-design-lightgray">
+    <div className="min-h-screen">
       <header className="bg-white border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
           <h1 className="text-xl md:text-2xl font-bold text-design-blue">Design Task Diary</h1>
-          <Button 
-            variant="outline" 
-            onClick={onExport}
-            className="flex items-center gap-2"
-            size={isMobile ? "sm" : "default"}
-          >
-            <FileDown size={isMobile ? 16 : 18} />
-            Export to Excel
-          </Button>
+          {onExport && (
+            <Button 
+              variant="outline" 
+              onClick={onExport}
+              className="flex items-center gap-2"
+              size={isMobile ? "sm" : "default"}
+            >
+              <FileDown size={isMobile ? 16 : 18} />
+              Export to Excel
+            </Button>
+          )}
         </div>
       </header>
       
