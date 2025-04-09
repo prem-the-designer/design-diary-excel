@@ -52,7 +52,7 @@ const SideNavigation = () => {
   };
   
   // The actual sidebar content (shared between desktop and mobile)
-  const SidebarContent = () => (
+  const SidebarContents = () => (
     <div className={`h-full ${isExpanded ? 'w-full' : 'w-16'} flex flex-col transition-all duration-300`}>
       <SidebarContent>
         {navigationItems.map(navGroup => (
@@ -102,7 +102,7 @@ const SideNavigation = () => {
             <div className="flex justify-end p-2 border-b">
               <Toggle 
                 pressed={!isExpanded} 
-                onPressedChange={() => toggleSidebar()} 
+                onPressedChange={toggleSidebar} 
                 className={`w-full justify-between px-4 py-2 ${isExpanded ? 'text-gray-800' : 'text-white'}`}
               >
                 {isExpanded ? (
@@ -118,7 +118,7 @@ const SideNavigation = () => {
                 )}
               </Toggle>
             </div>
-            <SidebarContent />
+            <SidebarContents />
           </SheetContent>
         </Sheet>
       </>
@@ -133,7 +133,7 @@ const SideNavigation = () => {
           variant="inset" 
           className={`border-r transition-colors duration-300 w-full ${isExpanded ? 'bg-white' : 'bg-[#20a6e8] text-white'}`}
         >
-          <SidebarContent />
+          <SidebarContents />
         </Sidebar>
       </div>
     </SidebarProvider>
