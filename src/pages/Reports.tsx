@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DailySummary from "@/components/DailySummary";
+import { FileDown } from "lucide-react";
 
 const Reports = () => {
   const [tasks, setTasks] = useState<Task[]>(() => {
@@ -96,6 +97,48 @@ const Reports = () => {
       console.error("Export error:", error);
       toast.error("Error exporting tasks");
     }
+  };
+  
+  // Option to export to Google Sheets
+  const handleExportToGoogleSheets = () => {
+    // Create a CSV string from filtered tasks
+    const headers = ["Date", "Project", "Task Name", "Task Type", "Time Spent (hours)", "Notes"];
+    const csvRows = [headers];
+    
+    filteredTasks.forEach(task => {
+      csvRows.push([
+        format(new Date(task.date), "yyyy-MM-dd"),
+        task.project,
+        task.taskName,
+        task.taskType,
+        task.timeSpent.toString(),
+        task.notes
+      ]);
+    });
+    
+    const csvContent = csvRows.map(row => row.join(',')).join('\n');
+    
+    // Create a Blob containing the CSV data
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create a link to open Google Sheets with the data
+    const googleSheetsUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQPwexX/create?usp=sharing`;
+    
+    // Open Google Sheets in a new tab
+    window.open(googleSheetsUrl, '_blank');
+    
+    // Show toast notification
+    toast.success("Opening Google Sheets. Please import the downloaded CSV file.");
+    
+    // Trigger download of CSV file
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "design-tasks-export.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
   
   // Reset all filters
@@ -262,9 +305,19 @@ const Reports = () => {
                 </div>
               </div>
               
-              <div className="flex justify-between">
+              <div className="flex justify-between flex-wrap gap-3">
                 <Button variant="outline" onClick={resetFilters}>Reset Filters</Button>
-                <Button onClick={handleExportFiltered}>Export Filtered Data</Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleExportToGoogleSheets}
+                    className="flex items-center gap-2"
+                  >
+                    <FileDown size={18} />
+                    Export to Google Sheets
+                  </Button>
+                  <Button onClick={handleExportFiltered}>Export to Excel</Button>
+                </div>
               </div>
               
               <div>

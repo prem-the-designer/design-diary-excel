@@ -21,10 +21,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
-import { PlusCircle, Trash2, MoveUp, MoveDown } from "lucide-react";
+import { PlusCircle, Trash2, MoveUp, MoveDown, Command, Plus } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
+import { Command as CommandPrimitive } from "cmdk";
 
-type FieldType = "text" | "textarea" | "dropdown" | "checkbox" | "number";
+type FieldType = "text" | "textarea" | "dropdown" | "checkbox" | "number" | "radio" | "button" | "date" | "time" | "color" | "range";
 
 interface CustomField {
   id: string;
@@ -43,6 +49,7 @@ const Settings = () => {
     required: false,
   });
   const [dropdownOptions, setDropdownOptions] = useState("");
+  const [commandOpen, setCommandOpen] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -77,8 +84,8 @@ const Settings = () => {
       order: customFields.length,
     };
 
-    // Add options for dropdown fields
-    if (fieldToAdd.type === "dropdown" && dropdownOptions) {
+    // Add options for dropdown and radio fields
+    if ((fieldToAdd.type === "dropdown" || fieldToAdd.type === "radio") && dropdownOptions) {
       fieldToAdd.options = dropdownOptions
         .split(",")
         .map((option) => option.trim())
@@ -118,8 +125,28 @@ const Settings = () => {
     setCustomFields(newFields);
   };
 
+  const fieldTypes: { value: FieldType; label: string }[] = [
+    { value: "text", label: "Single Line Text" },
+    { value: "textarea", label: "Multi-line Text" },
+    { value: "dropdown", label: "Dropdown" },
+    { value: "checkbox", label: "Checkbox" },
+    { value: "number", label: "Number" },
+    { value: "radio", label: "Radio Button" },
+    { value: "button", label: "Button" },
+    { value: "date", label: "Date Picker" },
+    { value: "time", label: "Time Picker" },
+    { value: "color", label: "Color Picker" },
+    { value: "range", label: "Range Slider" }
+  ];
+
+  // Command menu for adding fields like Notion
+  const handleFieldTypeSelection = (type: FieldType) => {
+    setNewField({ ...newField, type });
+    setCommandOpen(false);
+  };
+
   return (
-    <Layout onExport={() => {}}>
+    <Layout>
       <div className="space-y-6">
         <Card>
           <CardHeader>
@@ -143,21 +170,50 @@ const Settings = () => {
                   
                   <div className="space-y-2">
                     <Label htmlFor="fieldType">Field Type</Label>
-                    <Select
-                      value={newField.type as string}
-                      onValueChange={(value) => setNewField({ ...newField, type: value as FieldType })}
-                    >
-                      <SelectTrigger id="fieldType">
-                        <SelectValue placeholder="Select field type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="text">Single Line Text</SelectItem>
-                        <SelectItem value="textarea">Multi-line Text</SelectItem>
-                        <SelectItem value="dropdown">Dropdown</SelectItem>
-                        <SelectItem value="checkbox">Checkbox</SelectItem>
-                        <SelectItem value="number">Number</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Select
+                        value={newField.type as string}
+                        onValueChange={(value) => setNewField({ ...newField, type: value as FieldType })}
+                      >
+                        <SelectTrigger id="fieldType" className="flex-1">
+                          <SelectValue placeholder="Select field type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {fieldTypes.map(type => (
+                            <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      
+                      <Popover open={commandOpen} onOpenChange={setCommandOpen}>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" size="icon">
+                            <Command className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0 w-72" align="end">
+                          <CommandPrimitive className="rounded-lg border shadow-md">
+                            <CommandPrimitive.Input 
+                              placeholder="Search field type..." 
+                              className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            />
+                            <CommandPrimitive.List className="max-h-[300px] overflow-y-auto p-1">
+                              <CommandPrimitive.Empty>No field type found.</CommandPrimitive.Empty>
+                              {fieldTypes.map(type => (
+                                <CommandPrimitive.Item
+                                  key={type.value}
+                                  value={type.value}
+                                  onSelect={() => handleFieldTypeSelection(type.value)}
+                                  className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                                >
+                                  {type.label}
+                                </CommandPrimitive.Item>
+                              ))}
+                            </CommandPrimitive.List>
+                          </CommandPrimitive>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
                   
                   <div className="flex items-end space-x-2">
@@ -174,9 +230,9 @@ const Settings = () => {
                   </div>
                 </div>
 
-                {newField.type === "dropdown" && (
+                {(newField.type === "dropdown" || newField.type === "radio") && (
                   <div className="space-y-2">
-                    <Label htmlFor="options">Dropdown Options (comma-separated)</Label>
+                    <Label htmlFor="options">Options (comma-separated)</Label>
                     <Input
                       id="options"
                       value={dropdownOptions}
@@ -211,11 +267,7 @@ const Settings = () => {
                           <TableRow key={field.id}>
                             <TableCell>{field.name}</TableCell>
                             <TableCell>
-                              {field.type === "text" && "Single Line Text"}
-                              {field.type === "textarea" && "Multi-line Text"}
-                              {field.type === "dropdown" && "Dropdown"}
-                              {field.type === "checkbox" && "Checkbox"}
-                              {field.type === "number" && "Number"}
+                              {fieldTypes.find(t => t.value === field.type)?.label || field.type}
                             </TableCell>
                             <TableCell>{field.required ? "Yes" : "No"}</TableCell>
                             <TableCell className="text-right">

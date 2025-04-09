@@ -6,14 +6,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
   children: React.ReactNode;
-  onExport: () => void;
+  onExport?: () => void;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, onExport }) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full">
       <header className="bg-white border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
           <h1 className="text-xl md:text-2xl font-bold text-design-blue">Design Task Diary</h1>
@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onExport }) => {
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-6 md:py-8 max-w-full overflow-x-hidden">
+      <main className="container mx-auto px-4 py-6 md:py-8">
         {children}
       </main>
       
