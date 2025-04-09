@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import SideNavigation from "./components/SideNavigation";
 import { useIsMobile } from "./hooks/use-mobile";
 import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Toggle } from "@/components/ui/toggle";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,13 @@ const AppContent = () => {
       clearInterval(intervalId);
     };
   }, []);
+
+  const toggleSidebar = () => {
+    const newState = !isExpanded;
+    document.cookie = `sidebar:state=${newState}; path=/; max-age=${60 * 60 * 24 * 7}`;
+    setIsExpanded(newState);
+    window.dispatchEvent(new Event('storage'));
+  };
   
   return (
     <div className="flex min-h-screen w-full">
@@ -44,19 +53,42 @@ const AppContent = () => {
       <div 
         className={`flex-1 transition-all duration-300 ${
           isMobile 
-            ? 'ml-0' 
+            ? 'ml-0 w-full' 
             : isExpanded 
-              ? 'ml-[25%] lg:ml-[20%]' 
-              : 'ml-16'
+              ? 'ml-[25%]' 
+              : 'ml-[10%]'
         }`}
       >
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        {!isMobile && (
+          <div className="sticky top-0 z-10 bg-white p-2 border-b">
+            <Toggle 
+              pressed={!isExpanded} 
+              onPressedChange={toggleSidebar} 
+              className="flex justify-between items-center px-4 py-2 bg-gray-50 rounded-md"
+            >
+              {isExpanded ? (
+                <>
+                  <span>Collapse</span>
+                  <ChevronLeft className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  <span>Expand</span>
+                  <ChevronRight className="h-4 w-4" />
+                </>
+              )}
+            </Toggle>
+          </div>
+        )}
+        <div className="p-4">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );
