@@ -3,50 +3,89 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" />;
+  }
+  
+  return <>{children}</>;
+};
+
 const AppContent = () => {
+  const { user, signOut } = useAuth();
+  
   return (
     <div className="min-h-screen w-full">
       <nav className="w-full" style={{ backgroundColor: '#20a6e8' }}>
-        <div className="container mx-auto px-4 py-3 flex space-x-4">
-          <NavLink 
-            to="/" 
-            className={({ isActive }) => 
-              `text-white font-semibold ${isActive ? 'underline' : ''}`
-            }
-          >
-            Home
-          </NavLink>
-          <NavLink 
-            to="/reports" 
-            className={({ isActive }) => 
-              `text-white font-semibold ${isActive ? 'underline' : ''}`
-            }
-          >
-            Reports
-          </NavLink>
-          <NavLink 
-            to="/settings" 
-            className={({ isActive }) => 
-              `text-white font-semibold ${isActive ? 'underline' : ''}`
-            }
-          >
-            Settings
-          </NavLink>
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex space-x-4">
+            <NavLink 
+              to="/" 
+              className={({ isActive }) => 
+                `text-white font-semibold ${isActive ? 'underline' : ''}`
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink 
+              to="/reports" 
+              className={({ isActive }) => 
+                `text-white font-semibold ${isActive ? 'underline' : ''}`
+              }
+            >
+              Reports
+            </NavLink>
+            <NavLink 
+              to="/settings" 
+              className={({ isActive }) => 
+                `text-white font-semibold ${isActive ? 'underline' : ''}`
+              }
+            >
+              Settings
+            </NavLink>
+          </div>
+          {user ? (
+            <button 
+              onClick={signOut}
+              className="text-white hover:underline font-semibold"
+            >
+              Logout
+            </button>
+          ) : (
+            <NavLink 
+              to="/auth" 
+              className={({ isActive }) => 
+                `text-white font-semibold ${isActive ? 'underline' : ''}`
+              }
+            >
+              Login
+            </NavLink>
+          )}
         </div>
       </nav>
       <div className="p-4">
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -58,14 +97,15 @@ const AppContent = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
 
 export default App;
-
