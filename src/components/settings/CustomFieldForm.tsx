@@ -16,7 +16,14 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover";
-import { CommandPrimitive } from "cmdk";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem
+} from "@/components/ui/command";
 import { toast } from "sonner";
 import { FieldType, fieldTypes, CustomField } from "@/types/customField";
 
@@ -106,25 +113,23 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="p-0 w-72" align="end">
-                <CommandPrimitive className="rounded-lg border shadow-md">
-                  <CommandPrimitive.Input 
-                    placeholder="Search field type..." 
-                    className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  />
-                  <CommandPrimitive.List className="max-h-[300px] overflow-y-auto p-1">
-                    <CommandPrimitive.Empty>No field type found.</CommandPrimitive.Empty>
-                    {fieldTypes.map(type => (
-                      <CommandPrimitive.Item
-                        key={type.value}
-                        value={type.value}
-                        onSelect={() => handleFieldTypeSelection(type.value)}
-                        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      >
-                        {type.label}
-                      </CommandPrimitive.Item>
-                    ))}
-                  </CommandPrimitive.List>
-                </CommandPrimitive>
+                <Command>
+                  <CommandInput placeholder="Search field type..." />
+                  <CommandList>
+                    <CommandEmpty>No field type found.</CommandEmpty>
+                    <CommandGroup>
+                      {fieldTypes.map(type => (
+                        <CommandItem
+                          key={type.value}
+                          value={type.value}
+                          onSelect={() => handleFieldTypeSelection(type.value)}
+                        >
+                          {type.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
               </PopoverContent>
             </Popover>
           </div>
