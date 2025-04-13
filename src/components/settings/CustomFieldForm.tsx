@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { PlusCircle, Command } from "lucide-react";
+import { PlusCircle, CommandIcon } from "lucide-react"; // Rename Command to CommandIcon
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -109,7 +109,7 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
             <Popover open={commandOpen} onOpenChange={setCommandOpen}>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="icon">
-                  <Command className="h-4 w-4" />
+                  <CommandIcon className="h-4 w-4" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="p-0 w-72" align="end">
