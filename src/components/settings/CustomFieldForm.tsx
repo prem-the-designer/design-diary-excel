@@ -106,7 +106,7 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
               </SelectContent>
             </Select>
             
-            <Popover open={commandOpen} onOpenChange={setCommandOpen}>
+            {/* <Popover open={commandOpen} onOpenChange={setCommandOpen}>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="icon">
                   <CommandIcon className="h-4 w-4" />
@@ -131,12 +131,12 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
                   </CommandList>
                 </Command>
               </PopoverContent>
-            </Popover>
+            </Popover> */}
           </div>
         </div>
         
-        <div className="flex items-end space-x-2">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-end space-x-2 " >
+          <div className="flex items-end space-x-2">
             <input
               type="checkbox"
               id="requiredField"
