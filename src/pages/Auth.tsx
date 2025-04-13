@@ -114,7 +114,7 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel className="text-gray-300">Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@example.com" {...field} className="bg-gray-800/60 border-gray-700" />
+                          <Input placeholder="email@example.com" {...field} className="bg-gray-800/60 border-gray-700 text-white" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -127,7 +127,7 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel className="text-gray-300">Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} className="bg-gray-800/60 border-gray-700" />
+                          <Input type="password" placeholder="••••••••" {...field} className="bg-gray-800/60 border-gray-700 text-white" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -158,7 +158,7 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel className="text-gray-300">Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@example.com" {...field} className="bg-gray-800/60 border-gray-700" />
+                          <Input placeholder="email@example.com" {...field} className="bg-gray-800/60 border-gray-700 text-white" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -171,7 +171,7 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel className="text-gray-300">Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} className="bg-gray-800/60 border-gray-700" />
+                          <Input type="password" placeholder="••••••••" {...field} className="bg-gray-800/60 border-gray-700 text-white" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
