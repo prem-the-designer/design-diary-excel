@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onExport }) => {
                 Export to Excel
               </Button>
             )}
-            <Button 
+{/*             <Button 
               variant="ghost" 
               onClick={signOut}
               className="flex items-center gap-2"
@@ -39,7 +39,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onExport }) => {
             >
               <LogOut size={isMobile ? 16 : 18} />
               {!isMobile && "Logout"}
-            </Button>
+            </Button> */}
           </div>
         </div>
       </header>
