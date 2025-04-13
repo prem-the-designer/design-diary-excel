@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Task, taskTypes } from "@/types/task";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -36,7 +35,6 @@ const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
   const [notes, setNotes] = useState("");
   const isMobile = useIsMobile();
 
-  // Initialize form with task data when opened
   useEffect(() => {
     if (task) {
       setDate(parseISO(task.date));
@@ -51,7 +49,6 @@ const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
     if (!project || !taskName || !taskType || !timeSpent) {
       toast.error("Please fill all required fields");
       return;
@@ -75,7 +72,6 @@ const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
     };
     
     onUpdate(updatedTask);
-    toast.success("Task updated successfully!");
   };
 
   return (

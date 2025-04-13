@@ -9,9 +9,10 @@ export interface Task {
   notes: string;
   createdAt: string;
   customFields?: Record<string, any>;
+  user_id?: string;
 }
 
-export type TaskFormData = Omit<Task, 'id' | 'createdAt'>;
+export type TaskFormData = Omit<Task, 'id' | 'createdAt' | 'user_id'>;
 
 export const taskTypes = [
   "UI Design",

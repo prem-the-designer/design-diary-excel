@@ -4,13 +4,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import { useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -64,7 +63,17 @@ const AppContent = () => {
                 Settings
               </NavLink>
             </div>
-            
+            {user && (
+              <div className="flex items-center gap-4">
+                <span className="text-white">{user.email}</span>
+                <button 
+                  onClick={() => signOut()} 
+                  className="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </nav>
       )}
