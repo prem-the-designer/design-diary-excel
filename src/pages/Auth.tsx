@@ -100,8 +100,8 @@ const Auth = () => {
         </CardHeader>
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid grid-cols-2 w-full bg-gray-800/60">
-            <TabsTrigger value="login" className="data-[state=active]:bg-gray-700">Login</TabsTrigger>
-            <TabsTrigger value="signup" className="data-[state=active]:bg-gray-700">Sign Up</TabsTrigger>
+            <TabsTrigger value="login" className="data-[state=active]:bg-white">Login</TabsTrigger>
+            <TabsTrigger value="signup" className="data-[state=active]:bg-white">Sign Up</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <Form {...loginForm}>
