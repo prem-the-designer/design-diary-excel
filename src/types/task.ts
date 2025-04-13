@@ -8,6 +8,7 @@ export interface Task {
   timeSpent: number;
   notes: string;
   createdAt: string;
+  customFields?: Record<string, any>;
 }
 
 export type TaskFormData = Omit<Task, 'id' | 'createdAt'>;
