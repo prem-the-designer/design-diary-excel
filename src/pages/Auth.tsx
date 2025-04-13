@@ -91,29 +91,30 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1483401757487-2ced3fa77952?q=80&w=2073')] bg-cover bg-center opacity-10"></div>
+      <Card className="w-full max-w-md bg-black/50 backdrop-blur-sm border border-white/10 shadow-xl relative z-10">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-design-blue">Design Task Diary</CardTitle>
-          <CardDescription>Login or create an account to continue</CardDescription>
+          <CardTitle className="text-2xl font-bold text-white">Design Task Diary</CardTitle>
+          <CardDescription className="text-gray-300">Login or create an account to continue</CardDescription>
         </CardHeader>
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid grid-cols-2 w-full">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <TabsList className="grid grid-cols-2 w-full bg-gray-800/60">
+            <TabsTrigger value="login" className="data-[state=active]:bg-gray-700">Login</TabsTrigger>
+            <TabsTrigger value="signup" className="data-[state=active]:bg-gray-700">Sign Up</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <Form {...loginForm}>
               <form onSubmit={loginForm.handleSubmit(onLogin)}>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 pt-6">
                   <FormField
                     control={loginForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-gray-300">Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@example.com" {...field} />
+                          <Input placeholder="email@example.com" {...field} className="bg-gray-800/60 border-gray-700" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -124,9 +125,9 @@ const Auth = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-gray-300">Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
+                          <Input type="password" placeholder="••••••••" {...field} className="bg-gray-800/60 border-gray-700" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -136,7 +137,7 @@ const Auth = () => {
                 <CardFooter>
                   <Button 
                     type="submit" 
-                    className="w-full" 
+                    className="w-full bg-design-blue hover:bg-blue-600 transition-colors" 
                     disabled={isLoading}
                   >
                     <LogIn className="mr-2 h-4 w-4" />
@@ -149,15 +150,15 @@ const Auth = () => {
           <TabsContent value="signup">
             <Form {...signupForm}>
               <form onSubmit={signupForm.handleSubmit(onSignup)}>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 pt-6">
                   <FormField
                     control={signupForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-gray-300">Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@example.com" {...field} />
+                          <Input placeholder="email@example.com" {...field} className="bg-gray-800/60 border-gray-700" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -168,9 +169,9 @@ const Auth = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-gray-300">Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
+                          <Input type="password" placeholder="••••••••" {...field} className="bg-gray-800/60 border-gray-700" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -180,7 +181,7 @@ const Auth = () => {
                 <CardFooter>
                   <Button 
                     type="submit" 
-                    className="w-full" 
+                    className="w-full bg-design-blue hover:bg-blue-600 transition-colors" 
                     disabled={isLoading}
                   >
                     <UserPlus className="mr-2 h-4 w-4" />
