@@ -64,23 +64,7 @@ const AppContent = () => {
                 Settings
               </NavLink>
             </div>
-            {user ? (
-              <button 
-                onClick={signOut}
-                className="text-white hover:underline font-semibold"
-              >
-                Logout
-              </button>
-            ) : (
-              <NavLink 
-                to="/auth" 
-                className={({ isActive }) => 
-                  `text-white font-semibold ${isActive ? 'underline' : ''}`
-                }
-              >
-                
-              </NavLink>
-            )}
+            
           </div>
         </nav>
       )}
