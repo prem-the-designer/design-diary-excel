@@ -75,7 +75,7 @@ const AppContent = () => {
                 `text-white font-semibold ${isActive ? 'underline' : ''}`
               }
             >
-              Login
+              
             </NavLink>
           )}
         </div>
