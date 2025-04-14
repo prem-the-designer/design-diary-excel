@@ -115,7 +115,7 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
   if (customFields.length === 0) {
     return (
       <div className="text-center py-10 text-muted-foreground bg-muted rounded-md">
-        No custom fields added yet
+        No fields added yet
       </div>
     );
   }

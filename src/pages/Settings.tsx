@@ -14,7 +14,7 @@ const Settings = () => {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-design-blue">Form Fields</CardTitle>
+            <CardTitle className="text-design-blue">Fields</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">

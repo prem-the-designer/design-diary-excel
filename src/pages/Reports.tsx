@@ -286,7 +286,7 @@ const Reports = () => {
                       <SelectValue placeholder="Select task type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Task Types</SelectItem>
+                      <SelectItem value="all-types">All Task Types</SelectItem>
                       {taskTypes.map(type => (
                         <SelectItem key={type} value={type}>{type}</SelectItem>
                       ))}
@@ -304,7 +304,7 @@ const Reports = () => {
                       <SelectValue placeholder="Select project" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Projects</SelectItem>
+                      <SelectItem value="all-projects">All Projects</SelectItem>
                       {projects.map(project => (
                         <SelectItem key={project} value={project}>{project}</SelectItem>
                       ))}
