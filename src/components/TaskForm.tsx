@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TaskFormData, taskTypes } from "@/types/task";
+import { TaskFormData } from "@/types/task";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,52 +15,33 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useCustomFields } from "@/hooks/useCustomFields";
+import { CustomField } from "@/types/customField";
 
 interface TaskFormProps {
   onSaveTask: (task: TaskFormData) => void;
 }
 
-interface CustomField {
-  id: string;
-  name: string;
-  type: string;
-  required: boolean;
-  options?: string[];
-  order: number;
-}
-
 const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
   const [date, setDate] = useState<Date>(new Date());
-  const [project, setProject] = useState("");
-  const [taskName, setTaskName] = useState("");
-  const [taskType, setTaskType] = useState("");
-  const [timeSpent, setTimeSpent] = useState("");
-  const [notes, setNotes] = useState("");
-  const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, any>>({});
   const isMobile = useIsMobile();
+  const { customFields } = useCustomFields();
+  const [sortedFields, setSortedFields] = useState<CustomField[]>([]);
 
-  // Load custom fields from localStorage
+  // Load custom fields
   useEffect(() => {
-    const savedFields = localStorage.getItem("designTaskCustomFields");
-    if (savedFields) {
-      try {
-        const fields = JSON.parse(savedFields);
-        // Sort fields by order
-        fields.sort((a: CustomField, b: CustomField) => a.order - b.order);
-        setCustomFields(fields);
-        
-        // Initialize custom field values
-        const initialValues: Record<string, any> = {};
-        fields.forEach((field: CustomField) => {
-          initialValues[field.id] = field.type === "checkbox" ? false : "";
-        });
-        setCustomFieldValues(initialValues);
-      } catch (error) {
-        console.error("Error loading custom fields:", error);
-      }
-    }
-  }, []);
+    // Sort fields by order
+    const sorted = [...customFields].sort((a, b) => a.order - b.order);
+    setSortedFields(sorted);
+    
+    // Initialize custom field values
+    const initialValues: Record<string, any> = {};
+    sorted.forEach((field: CustomField) => {
+      initialValues[field.id] = field.type === "checkbox" ? false : "";
+    });
+    setCustomFieldValues(initialValues);
+  }, [customFields]);
 
   const handleCustomFieldChange = (fieldId: string, value: any) => {
     setCustomFieldValues((prev) => ({
@@ -72,7 +53,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
+    // Extract required field values
+    const project = customFieldValues["default-project"] || "";
+    const taskName = customFieldValues["default-taskName"] || "";
+    const taskType = customFieldValues["default-taskType"] || "";
+    const timeSpent = customFieldValues["default-timeSpent"] || "";
+    const notes = customFieldValues["default-notes"] || "";
+
+    // Validate required fields
     if (!project || !taskName || !taskType || !timeSpent) {
       toast.error("Please fill all required fields");
       return;
@@ -85,8 +73,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
       return;
     }
 
-    // Validate required custom fields
-    const requiredFieldsMissing = customFields
+    // Validate other required custom fields
+    const requiredFieldsMissing = sortedFields
       .filter(field => field.required)
       .some(field => {
         const value = customFieldValues[field.id];
@@ -98,7 +86,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
       return;
     }
     
-    const newTask: TaskFormData & { customFields?: Record<string, any> } = {
+    const newTask: TaskFormData = {
       date: format(date, "yyyy-MM-dd"),
       project,
       taskName,
@@ -108,18 +96,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
       customFields: customFieldValues
     };
     
-    onSaveTask(newTask as TaskFormData);
+    onSaveTask(newTask);
     
     // Reset form
-    setProject("");
-    setTaskName("");
-    setTaskType("");
-    setTimeSpent("");
-    setNotes("");
-    
-    // Reset custom field values
     const initialValues: Record<string, any> = {};
-    customFields.forEach((field) => {
+    sortedFields.forEach((field) => {
       initialValues[field.id] = field.type === "checkbox" ? false : "";
     });
     setCustomFieldValues(initialValues);
@@ -274,89 +255,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4 flex flex-col w-full">
-          <div className="space-y-2 w-full">
-            <Label htmlFor="date">Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className={`w-auto p-0 ${isMobile ? 'max-w-[280px]' : ''}`}>
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(date) => date && setDate(date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          
-          <div className="space-y-2 w-full">
-            <Label htmlFor="project">Project Name*</Label>
-            <Input
-              id="project"
-              value={project}
-              onChange={(e) => setProject(e.target.value)}
-              placeholder="e.g., Website Redesign"
-              required
-              className="w-full"
-            />
-          </div>
-          
-          <div className="space-y-2 w-full">
-            <Label htmlFor="taskName">Task Name*</Label>
-            <Input
-              id="taskName"
-              value={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
-              placeholder="e.g., Create Homepage Wireframes"
-              required
-              className="w-full"
-            />
-          </div>
-          
-          <div className="space-y-2 w-full">
-            <Label htmlFor="taskType">Task Type*</Label>
-            <Select value={taskType} onValueChange={setTaskType} required>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select task type" />
-              </SelectTrigger>
-              <SelectContent>
-                {taskTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2 w-full">
-            <Label htmlFor="timeSpent">Time Spent (hours)*</Label>
-            <Input
-              id="timeSpent"
-              type="number"
-              step="0.25"
-              min="0.25"
-              value={timeSpent}
-              onChange={(e) => setTimeSpent(e.target.value)}
-              placeholder="e.g., 2.5"
-              required
-              className="w-full"
-            />
-          </div>
-
-          {/* Render custom fields */}
-          {customFields.map((field) => (
+          {/* Render all custom fields based on their order */}
+          {sortedFields.map((field) => (
             <div key={field.id} className="space-y-2 w-full">
               <Label htmlFor={field.id}>
                 {field.name}{field.required ? "*" : ""}
@@ -364,18 +264,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
               {renderCustomField(field)}
             </div>
           ))}
-          
-          <div className="space-y-2 w-full">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add any additional details about the task..."
-              rows={3}
-              className="w-full"
-            />
-          </div>
           
           <Button type="submit" className="w-full mt-2">Save Task</Button>
         </form>
