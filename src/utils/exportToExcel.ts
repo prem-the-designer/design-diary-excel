@@ -34,3 +34,6 @@ export const exportTasksToExcel = (tasks: Task[], filename = 'design-tasks'): vo
   // Generate an xlsx file
   XLSX.writeFile(workbook, `${filename}.xlsx`);
 };
+
+// For backward compatibility
+export const exportToExcel = exportTasksToExcel;

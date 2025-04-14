@@ -21,18 +21,14 @@ const COLORS = [
 ];
 
 const DailySummary: React.FC<DailySummaryProps> = ({ tasks }) => {
-  // Get only today's tasks
-  const today = new Date().toISOString().split('T')[0];
-  const todaysTasks = tasks.filter(task => task.date === today);
-  
   const totalHours = useMemo(() => {
-    return todaysTasks.reduce((sum, task) => sum + task.timeSpent, 0);
-  }, [todaysTasks]);
+    return tasks.reduce((sum, task) => sum + task.timeSpent, 0);
+  }, [tasks]);
   
   const taskTypeData = useMemo(() => {
     const tasksByType: Record<string, number> = {};
     
-    todaysTasks.forEach(task => {
+    tasks.forEach(task => {
       if (tasksByType[task.taskType]) {
         tasksByType[task.taskType] += task.timeSpent;
       } else {
@@ -44,12 +40,12 @@ const DailySummary: React.FC<DailySummaryProps> = ({ tasks }) => {
       name,
       value,
     }));
-  }, [todaysTasks]);
+  }, [tasks]);
   
   const projectData = useMemo(() => {
     const tasksByProject: Record<string, number> = {};
     
-    todaysTasks.forEach(task => {
+    tasks.forEach(task => {
       if (tasksByProject[task.project]) {
         tasksByProject[task.project] += task.timeSpent;
       } else {
@@ -61,9 +57,9 @@ const DailySummary: React.FC<DailySummaryProps> = ({ tasks }) => {
       name,
       value,
     }));
-  }, [todaysTasks]);
+  }, [tasks]);
 
-  if (todaysTasks.length === 0) {
+  if (tasks.length === 0) {
     return (
       <Card>
         <CardHeader>

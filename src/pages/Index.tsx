@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from "react";
-import { Layout } from "@/components/Layout";
-import { TaskForm } from "@/components/TaskForm";
-import { DailySummary } from "@/components/DailySummary";
+import Layout from "@/components/Layout";
+import TaskForm from "@/components/TaskForm";
+import DailySummary from "@/components/DailySummary";
 import { Task } from "@/types/task";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { exportToExcel } from "@/utils/exportToExcel";
+import { exportTasksToExcel as exportToExcel } from "@/utils/exportToExcel";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -42,6 +42,7 @@ const Index = () => {
           taskType: record.taskType || "",
           timeSpent: record.timeSpent || 0,
           notes: record.notes || "",
+          createdAt: record.created_at || new Date().toISOString(),
         }));
         
         setTasks(formattedTasks);
@@ -143,8 +144,7 @@ const Index = () => {
         
         <div className="md:col-span-3 lg:col-span-1">
           <DailySummary 
-            totalHours={totalHoursToday} 
-            taskCount={todaysTasks.length} 
+            tasks={todaysTasks}
           />
         </div>
       </div>

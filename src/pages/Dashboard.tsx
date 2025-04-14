@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Layout } from "@/components/Layout";
+import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,7 +9,6 @@ import { Task } from "@/types/task";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { KeyedMutator } from "swr";
 import { LayoutDashboard, Plus } from "lucide-react";
 
 const Dashboard = () => {
@@ -45,6 +43,7 @@ const Dashboard = () => {
           taskType: record.taskType || "",
           timeSpent: record.timeSpent || 0,
           notes: record.notes || "",
+          createdAt: record.created_at || new Date().toISOString(),
         }));
         
         setTasks(formattedTasks);
@@ -140,7 +139,7 @@ const Dashboard = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [navigate]);
   
   return (
     <Layout>
