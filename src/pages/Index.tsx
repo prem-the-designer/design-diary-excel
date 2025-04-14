@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Task, TaskFormData } from "@/types/task";
 import Layout from "@/components/Layout";
@@ -148,6 +149,32 @@ const Index = () => {
     }
   };
 
+  const handleDeleteTask = async (taskId: string) => {
+    if (!user) {
+      toast.error("You must be logged in to delete tasks");
+      return;
+    }
+    
+    try {
+      // Delete from Supabase
+      const { error } = await supabase
+        .from("desk_table")
+        .delete()
+        .eq("task_id", taskId);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update local state
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+      toast.success("Task deleted successfully");
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      toast.error("Failed to delete task");
+    }
+  };
+
   const handleExport = () => {
     if (tasks.length === 0) {
       toast.error("No tasks to export");
@@ -180,10 +207,11 @@ const Index = () => {
           <TaskForm onSaveTask={handleSaveTask} />
           <DailySummary tasks={tasks} />
         </div>
-        <div className="w-full">
+        <div className="w-full h-full">
           <TaskList 
             tasks={tasks} 
             onUpdateTask={handleUpdateTask}
+            onDeleteTask={handleDeleteTask}
           />
         </div>
       </div>
