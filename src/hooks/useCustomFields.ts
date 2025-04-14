@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { CustomField } from "@/types/customField";
 
 export function useCustomFields() {
@@ -35,9 +35,14 @@ export function useCustomFields() {
     setCustomFields(fields);
   };
 
+  const initializeDefaultFields = useCallback((defaultFields: CustomField[]) => {
+    setCustomFields(defaultFields);
+  }, []);
+
   return {
     customFields,
     addCustomField,
     updateCustomFields,
+    initializeDefaultFields,
   };
 }

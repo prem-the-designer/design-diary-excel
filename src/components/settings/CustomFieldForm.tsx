@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { PlusCircle, CommandIcon } from "lucide-react"; // Rename Command to CommandIcon
+import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,23 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem
-} from "@/components/ui/command";
 import { toast } from "sonner";
 import { FieldType, fieldTypes, CustomField } from "@/types/customField";
-import { Separator } from "@/components/ui/separator";
-import { taskTypes } from "@/types/task";
 
 interface CustomFieldFormProps {
   onAddField: (field: CustomField) => void;
@@ -40,12 +25,6 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
     required: false,
   });
   const [dropdownOptions, setDropdownOptions] = useState("");
-  const [commandOpen, setCommandOpen] = useState(false);
-
-  const handleFieldTypeSelection = (type: FieldType) => {
-    setNewField({ ...newField, type });
-    setCommandOpen(false);
-  };
 
   const handleAddField = () => {
     if (!newField.name) {
@@ -74,21 +53,6 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
     setNewField({ name: "", type: "text", required: false });
     setDropdownOptions("");
     toast.success("Custom field added");
-  };
-
-  const handleAddBuiltInField = (fieldName: string, fieldType: FieldType, required: boolean = false, options?: string[]) => {
-    const id = `custom-${Date.now()}`;
-    const fieldToAdd: CustomField = {
-      id,
-      name: fieldName,
-      type: fieldType,
-      required,
-      order: 0,
-      options
-    };
-
-    onAddField(fieldToAdd);
-    toast.success(`${fieldName} field added`);
   };
 
   return (
@@ -155,56 +119,6 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
         <PlusCircle className="mr-2 h-4 w-4" />
         Add Field
       </Button>
-      
-      <Separator className="my-6" />
-      
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Add Standard Fields</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Button 
-            variant="outline" 
-            onClick={() => handleAddBuiltInField("Project Name", "text", true)}
-            className="justify-start"
-          >
-            Add Project Field
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => handleAddBuiltInField("Task Name", "text", true)}
-            className="justify-start"
-          >
-            Add Task Name Field
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => handleAddBuiltInField("Task Type", "dropdown", true, taskTypes)}
-            className="justify-start"
-          >
-            Add Task Type Field
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => handleAddBuiltInField("Time Spent", "number", true)}
-            className="justify-start"
-          >
-            Add Time Field
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => handleAddBuiltInField("Notes", "textarea", false)}
-            className="justify-start"
-          >
-            Add Notes Field
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => handleAddBuiltInField("Date", "date", true)}
-            className="justify-start"
-          >
-            Add Date Field
-          </Button>
-        </div>
-      </div>
     </div>
   );
 };

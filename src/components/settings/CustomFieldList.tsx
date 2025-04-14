@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { CustomField, EditingField, FieldType, fieldTypes } from "@/types/customField";
 
@@ -72,7 +73,8 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
       id: field.id,
       name: field.name,
       type: field.type,
-      options: field.options?.join(", ")
+      options: field.options?.join(", "),
+      required: field.required
     });
   };
 
@@ -89,6 +91,7 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
           ...field,
           name: editingField.name,
           type: editingField.type,
+          required: editingField.required
         };
 
         // Update options for dropdown and radio fields
@@ -166,7 +169,12 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
                       />
                     )}
                   </TableCell>
-                  <TableCell>{field.required ? "Yes" : "No"}</TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={editingField.required}
+                      onCheckedChange={(checked) => setEditingField({ ...editingField, required: checked === true })}
+                    />
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
                       <Button
@@ -223,6 +231,8 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
                         size="icon"
                         onClick={() => handleDeleteField(field.id)}
                         className="text-destructive hover:text-destructive"
+                        disabled={field.id.startsWith("default-")}
+                        title={field.id.startsWith("default-") ? "Default fields cannot be deleted" : "Delete field"}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

@@ -15,6 +15,7 @@ export interface EditingField {
   name: string;
   type: FieldType;
   options?: string;
+  required: boolean;
 }
 
 export const fieldTypes: { value: FieldType; label: string }[] = [
