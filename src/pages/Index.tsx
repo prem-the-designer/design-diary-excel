@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Task, TaskFormData } from "@/types/task";
 import Layout from "@/components/Layout";
@@ -88,14 +87,14 @@ const Index = () => {
         .insert({
           task_id: taskId,
           user_id: user.id,
-          task_date: taskData.date,
           project: taskData.project,
           taskName: taskData.taskName,
           taskType: taskData.taskType,
           timeSpent: taskData.timeSpent,
           notes: taskData.notes,
           customFields: taskData.customFields,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          task_date: taskData.date
         });
       
       if (error) {

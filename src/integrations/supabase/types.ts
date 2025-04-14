@@ -11,15 +11,39 @@ export type Database = {
     Tables: {
       desk_table: {
         Row: {
-          task_id: string | null
+          created_at: string | null
+          customFields: Json | null
+          notes: string | null
+          project: string | null
+          task_date: string | null
+          task_id: string
+          taskName: string | null
+          taskType: string | null
+          timeSpent: number | null
           user_id: string | null
         }
         Insert: {
-          task_id?: string | null
+          created_at?: string | null
+          customFields?: Json | null
+          notes?: string | null
+          project?: string | null
+          task_date?: string | null
+          task_id?: string
+          taskName?: string | null
+          taskType?: string | null
+          timeSpent?: number | null
           user_id?: string | null
         }
         Update: {
-          task_id?: string | null
+          created_at?: string | null
+          customFields?: Json | null
+          notes?: string | null
+          project?: string | null
+          task_date?: string | null
+          task_id?: string
+          taskName?: string | null
+          taskType?: string | null
+          timeSpent?: number | null
           user_id?: string | null
         }
         Relationships: []
