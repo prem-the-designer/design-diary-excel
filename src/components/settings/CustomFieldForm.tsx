@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/command";
 import { toast } from "sonner";
 import { FieldType, fieldTypes, CustomField } from "@/types/customField";
+import { Separator } from "@/components/ui/separator";
+import { taskTypes } from "@/types/task";
 
 interface CustomFieldFormProps {
   onAddField: (field: CustomField) => void;
@@ -74,6 +76,21 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
     toast.success("Custom field added");
   };
 
+  const handleAddBuiltInField = (fieldName: string, fieldType: FieldType, required: boolean = false, options?: string[]) => {
+    const id = `custom-${Date.now()}`;
+    const fieldToAdd: CustomField = {
+      id,
+      name: fieldName,
+      type: fieldType,
+      required,
+      order: 0,
+      options
+    };
+
+    onAddField(fieldToAdd);
+    toast.success(`${fieldName} field added`);
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">Add New Field</h3>
@@ -105,33 +122,6 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
                 ))}
               </SelectContent>
             </Select>
-            
-            {/* <Popover open={commandOpen} onOpenChange={setCommandOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <CommandIcon className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="p-0 w-72" align="end">
-                <Command>
-                  <CommandInput placeholder="Search field type..." />
-                  <CommandList>
-                    <CommandEmpty>No field type found.</CommandEmpty>
-                    <CommandGroup>
-                      {fieldTypes.map(type => (
-                        <CommandItem
-                          key={type.value}
-                          value={type.value}
-                          onSelect={() => handleFieldTypeSelection(type.value)}
-                        >
-                          {type.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover> */}
           </div>
         </div>
         
@@ -165,6 +155,56 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = ({ onAddField }) => {
         <PlusCircle className="mr-2 h-4 w-4" />
         Add Field
       </Button>
+      
+      <Separator className="my-6" />
+      
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">Add Standard Fields</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Button 
+            variant="outline" 
+            onClick={() => handleAddBuiltInField("Project Name", "text", true)}
+            className="justify-start"
+          >
+            Add Project Field
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => handleAddBuiltInField("Task Name", "text", true)}
+            className="justify-start"
+          >
+            Add Task Name Field
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => handleAddBuiltInField("Task Type", "dropdown", true, taskTypes)}
+            className="justify-start"
+          >
+            Add Task Type Field
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => handleAddBuiltInField("Time Spent", "number", true)}
+            className="justify-start"
+          >
+            Add Time Field
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => handleAddBuiltInField("Notes", "textarea", false)}
+            className="justify-start"
+          >
+            Add Notes Field
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => handleAddBuiltInField("Date", "date", true)}
+            className="justify-start"
+          >
+            Add Date Field
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

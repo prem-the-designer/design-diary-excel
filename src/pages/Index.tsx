@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import TaskForm from "@/components/TaskForm";
@@ -33,7 +32,6 @@ const Index = () => {
           
         if (error) throw error;
         
-        // Convert database records to Task objects
         const formattedTasks: Task[] = data.map((record: any) => ({
           id: record.task_id,
           date: record.task_date || new Date().toISOString(),
@@ -61,7 +59,7 @@ const Index = () => {
     fetchTasks();
   }, [user, toast]);
 
-  const handleSaveTask = async (task: Omit<Task, "id">) => {
+  const handleSaveTask = async (task: any) => {
     if (!user) {
       toast({
         title: "Error",
@@ -97,7 +95,6 @@ const Index = () => {
         description: "Task saved successfully",
       });
       
-      // Navigate to dashboard after creating a task
       navigate('/dashboard');
     } catch (error: any) {
       console.error("Error saving task:", error.message);
@@ -139,7 +136,7 @@ const Index = () => {
     <Layout onExport={handleExport}>
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-3 lg:col-span-2">
-          <TaskForm onSave={handleSaveTask} />
+          <TaskForm onSaveTask={handleSaveTask} />
         </div>
         
         <div className="md:col-span-3 lg:col-span-1">

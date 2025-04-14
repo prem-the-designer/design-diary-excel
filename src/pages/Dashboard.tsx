@@ -10,6 +10,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LayoutDashboard, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import TaskForm from "@/components/TaskForm";
+import { v4 as uuidv4 } from "uuid";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -19,6 +22,7 @@ const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [showTaskForm, setShowTaskForm] = useState(false);
   
   // Load tasks from Supabase
   useEffect(() => {
@@ -126,10 +130,56 @@ const Dashboard = () => {
       });
     }
   };
+
+  const handleSaveTask = async (task: any) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to save tasks",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const newTask: Task = {
+        ...task,
+        id: uuidv4(),
+      };
+
+      const { error } = await supabase.from("desk_table").insert({
+        task_id: newTask.id,
+        user_id: user.id,
+        task_date: newTask.date,
+        project: newTask.project,
+        taskName: newTask.taskName,
+        taskType: newTask.taskType,
+        timeSpent: newTask.timeSpent,
+        notes: newTask.notes,
+      });
+
+      if (error) throw error;
+
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+      setShowTaskForm(false);
+
+      toast({
+        title: "Success",
+        description: "Task saved successfully",
+      });
+    } catch (error: any) {
+      console.error("Error saving task:", error.message);
+      toast({
+        title: "Error",
+        description: `Failed to save task: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
   
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      navigate('/');
+      setShowTaskForm(true);
     }
   };
   
@@ -139,7 +189,7 @@ const Dashboard = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [navigate]);
+  }, []);
   
   return (
     <Layout>
@@ -172,7 +222,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <Button 
-              onClick={() => navigate('/')} 
+              onClick={() => setShowTaskForm(true)} 
               className="w-full bg-green-600 hover:bg-green-700 text-white"
             >
               Create Task
@@ -191,6 +241,15 @@ const Dashboard = () => {
           onDeleteTask={handleDeleteTask}
         />
       </div>
+
+      <Dialog open={showTaskForm} onOpenChange={setShowTaskForm}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-design-blue">Record Design Task</DialogTitle>
+          </DialogHeader>
+          <TaskForm onSaveTask={handleSaveTask} />
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

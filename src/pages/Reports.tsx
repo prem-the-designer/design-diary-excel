@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { format } from "date-fns";
 import Layout from "@/components/Layout";
@@ -16,7 +15,8 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DailySummary from "@/components/DailySummary";
-import { FileDown } from "lucide-react";
+import { FileDown, Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const Reports = () => {
   const [tasks, setTasks] = useState<Task[]>(() => {
@@ -42,14 +42,11 @@ const Reports = () => {
   const [activeTab, setActiveTab] = useState("today");
   const isMobile = useIsMobile();
   
-  // Get unique projects for filter
   const projects = Array.from(new Set(tasks.map(task => task.project)));
   
-  // Filter tasks based on criteria
   const filteredTasks = tasks.filter(task => {
     const taskDate = new Date(task.date);
     
-    // Apply date filter
     if (filter.startDate && taskDate < filter.startDate) return false;
     if (filter.endDate) {
       const endOfDay = new Date(filter.endDate);
@@ -57,19 +54,15 @@ const Reports = () => {
       if (taskDate > endOfDay) return false;
     }
     
-    // Apply task type filter
     if (filter.taskType && task.taskType !== filter.taskType) return false;
     
-    // Apply project filter
     if (filter.project && task.project !== filter.project) return false;
     
     return true;
   });
   
-  // Calculate total hours from filtered tasks
   const totalHours = filteredTasks.reduce((total, task) => total + task.timeSpent, 0);
   
-  // Handle export of filtered data
   const handleExportFiltered = () => {
     if (filteredTasks.length === 0) {
       toast.error("No tasks to export");
@@ -99,9 +92,7 @@ const Reports = () => {
     }
   };
   
-  // Option to export to Google Sheets
   const handleExportToGoogleSheets = () => {
-    // Create a CSV string from filtered tasks
     const headers = ["Date", "Project", "Task Name", "Task Type", "Time Spent (hours)", "Notes"];
     const csvRows = [headers];
     
@@ -118,20 +109,15 @@ const Reports = () => {
     
     const csvContent = csvRows.map(row => row.join(',')).join('\n');
     
-    // Create a Blob containing the CSV data
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     
-    // Create a link to open Google Sheets with the data
     const googleSheetsUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQPwexX/create?usp=sharing`;
     
-    // Open Google Sheets in a new tab
     window.open(googleSheetsUrl, '_blank');
     
-    // Show toast notification
     toast.success("Opening Google Sheets. Please import the downloaded CSV file.");
     
-    // Trigger download of CSV file
     const a = document.createElement('a');
     a.href = url;
     a.download = "design-tasks-export.csv";
@@ -141,7 +127,6 @@ const Reports = () => {
     URL.revokeObjectURL(url);
   };
   
-  // Reset all filters
   const resetFilters = () => {
     setFilter({
       startDate: undefined,
@@ -153,7 +138,6 @@ const Reports = () => {
     toast.info("Filters reset");
   };
   
-  // Handle tab change
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     
@@ -161,7 +145,7 @@ const Reports = () => {
     today.setHours(0, 0, 0, 0);
     
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay()); // Start from Sunday
+    startOfWeek.setDate(today.getDate() - today.getDay());
     
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     
@@ -197,7 +181,6 @@ const Reports = () => {
         }));
         break;
       case "custom":
-        // Don't change dates when switching to custom
         break;
     }
   };
@@ -205,7 +188,18 @@ const Reports = () => {
   return (
     <Layout onExport={handleExportFiltered}>
       <div className="space-y-6">
-        <DailySummary tasks={filteredTasks} />
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-design-blue">Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="w-full" style={{ overflowX: 'auto' }}>
+              <div style={{ minWidth: '100%', minHeight: '300px' }}>
+                <DailySummary tasks={filteredTasks} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         
         <Card>
           <CardHeader>
@@ -228,11 +222,18 @@ const Reports = () => {
                       <Label>Start Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button variant="outline" className="w-full justify-start">
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !filter.startDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {filter.startDate ? format(filter.startDate, "PP") : "Select start date"}
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
+                        <PopoverContent className={`w-auto p-0 ${isMobile ? 'max-w-[280px]' : ''}`}>
                           <Calendar
                             mode="single"
                             selected={filter.startDate}
@@ -248,11 +249,18 @@ const Reports = () => {
                       <Label>End Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button variant="outline" className="w-full justify-start">
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !filter.endDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {filter.endDate ? format(filter.endDate, "PP") : "Select end date"}
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
+                        <PopoverContent className={`w-auto p-0 ${isMobile ? 'max-w-[280px]' : ''}`}>
                           <Calendar
                             mode="single"
                             selected={filter.endDate}
@@ -278,7 +286,7 @@ const Reports = () => {
                       <SelectValue placeholder="Select task type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all-types">All Task Types</SelectItem>
+                      <SelectItem value="">All Task Types</SelectItem>
                       {taskTypes.map(type => (
                         <SelectItem key={type} value={type}>{type}</SelectItem>
                       ))}
@@ -296,7 +304,7 @@ const Reports = () => {
                       <SelectValue placeholder="Select project" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all-projects">All Projects</SelectItem>
+                      <SelectItem value="">All Projects</SelectItem>
                       {projects.map(project => (
                         <SelectItem key={project} value={project}>{project}</SelectItem>
                       ))}

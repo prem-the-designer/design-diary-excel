@@ -14,14 +14,14 @@ const Settings = () => {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-design-blue">Form Customization</CardTitle>
+            <CardTitle className="text-design-blue">Form Fields</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               <CustomFieldForm onAddField={addCustomField} />
 
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Custom Fields</h3>
+                <h3 className="text-lg font-medium">Fields</h3>
                 
                 <CustomFieldList 
                   customFields={customFields}
