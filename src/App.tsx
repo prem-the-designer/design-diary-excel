@@ -10,6 +10,7 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,14 @@ const AppContent = () => {
                 Home
               </NavLink>
               <NavLink 
+                to="/dashboard" 
+                className={({ isActive }) => 
+                  `text-white font-semibold ${isActive ? 'underline' : ''}`
+                }
+              >
+                Dashboard
+              </NavLink>
+              <NavLink 
                 to="/reports" 
                 className={({ isActive }) => 
                   `text-white font-semibold ${isActive ? 'underline' : ''}`
@@ -81,6 +90,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

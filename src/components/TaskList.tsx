@@ -96,9 +96,9 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdateTask, onDeleteTask }
         <CardHeader>
           <CardTitle className="text-design-blue">Recent Tasks</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 overflow-hidden">
-          <ScrollArea className="h-[80vh]">
-            <div className="space-y-1">
+        <CardContent className="flex-1 p-0">
+          <ScrollArea className="h-[600px]">
+            <div className="p-6 space-y-1">
               {Object.entries(tasksByDate).map(([date, dateTasks], groupIndex) => (
                 <div key={date} className="mb-6">
                   <div className="font-medium text-lg text-design-darkgray mb-3">{date}</div>
