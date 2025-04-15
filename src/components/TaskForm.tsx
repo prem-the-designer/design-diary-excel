@@ -2,11 +2,12 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCustomFields } from "@/hooks/useCustomFields";
-import { TaskFormData } from "@/types/task";
+import { TaskFormData, skillCategories } from "@/types/task";
 import FormField from "./task-form/FormField";
 import DatePickerField from "./task-form/DatePickerField";
 import TaskFormSubmitButton from "./task-form/TaskFormSubmitButton";
 import { useTaskForm } from "./task-form/useTaskForm";
+import CustomSelectField from "./task-form/CustomSelectField";
 
 interface TaskFormProps {
   onSaveTask: (task: TaskFormData) => void;
@@ -48,6 +49,17 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSaveTask }) => {
               onChange={(value) => handleCustomFieldChange(field.id, value)}
             />
           ))}
+          
+          {/* Skill Category Field */}
+          <CustomSelectField
+            id="skillCategory"
+            name="Skill Category"
+            value={customFieldValues["skillCategory"] || ""}
+            onChange={(value) => handleCustomFieldChange("skillCategory", value)}
+            options={skillCategories}
+            required={false}
+            placeholder="Select skill category"
+          />
           
           <TaskFormSubmitButton />
         </form>

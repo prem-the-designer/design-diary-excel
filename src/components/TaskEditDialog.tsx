@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Task } from "@/types/task";
+import { Task, skillCategories } from "@/types/task";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { format, parseISO } from "date-fns";
@@ -9,6 +9,7 @@ import { useCustomFields } from "@/hooks/useCustomFields";
 import { CustomField } from "@/types/customField";
 import FormField from "./task-form/FormField";
 import DatePickerField from "./task-form/DatePickerField";
+import CustomSelectField from "./task-form/CustomSelectField";
 
 interface TaskEditDialogProps {
   task: Task;
@@ -42,6 +43,9 @@ const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
       initialValues["default-taskType"] = task.taskType;
       initialValues["default-timeSpent"] = task.timeSpent.toString();
       initialValues["default-notes"] = task.notes || "";
+      
+      // Set skill category field
+      initialValues["skillCategory"] = task.customFields?.skillCategory || "";
       
       // Set custom fields from task
       if (task.customFields) {
@@ -126,6 +130,17 @@ const TaskEditDialog: React.FC<TaskEditDialogProps> = ({
               onChange={(value) => handleCustomFieldChange(field.id, value)}
             />
           ))}
+
+          {/* Skill Category Field */}
+          <CustomSelectField
+            id="skillCategory"
+            name="Skill Category"
+            value={customFieldValues["skillCategory"] || ""}
+            onChange={(value) => handleCustomFieldChange("skillCategory", value)}
+            options={skillCategories}
+            required={false}
+            placeholder="Select skill category"
+          />
           
           <div className="flex gap-3 justify-end pt-2">
             <Button type="button" variant="outline" onClick={onClose}>

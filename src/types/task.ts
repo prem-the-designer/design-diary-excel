@@ -26,3 +26,16 @@ export const taskTypes = [
   "Documentation",
   "Other"
 ];
+
+export const skillCategories = [
+  "Design",
+  "Development",
+  "Research",
+  "Communication",
+  "Leadership",
+  "Problem Solving",
+  "Creativity",
+  "Technical",
+  "Project Management",
+  "Learning"
+];

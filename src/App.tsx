@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
+import Growth from "./pages/Growth";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,14 @@ const AppContent = () => {
                 Dashboard
               </NavLink>
               <NavLink 
+                to="/growth" 
+                className={({ isActive }) => 
+                  `text-white font-semibold ${isActive ? 'underline' : ''}`
+                }
+              >
+                Growth
+              </NavLink>
+              <NavLink 
                 to="/reports" 
                 className={({ isActive }) => 
                   `text-white font-semibold ${isActive ? 'underline' : ''}`
@@ -91,6 +100,7 @@ const AppContent = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/growth" element={<ProtectedRoute><Growth /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
