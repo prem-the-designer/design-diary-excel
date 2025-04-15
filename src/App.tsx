@@ -45,7 +45,7 @@ const AppContent = () => {
                   `text-white font-semibold ${isActive ? 'underline' : ''}`
                 }
               >
-                Home
+                Activity
               </NavLink>
               <NavLink 
                 to="/dashboard" 

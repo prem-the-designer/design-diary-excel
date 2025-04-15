@@ -1,22 +1,21 @@
+
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
-import TaskForm from "@/components/TaskForm";
-import DailySummary from "@/components/DailySummary";
 import { Task } from "@/types/task";
 import { useToast } from "@/hooks/use-toast";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { exportTasksToExcel as exportToExcel } from "@/utils/exportToExcel";
-import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import KanbanBoard from "@/components/kanban/KanbanBoard";
+import { v4 as uuidv4 } from "uuid";
+import { KanbanStatus } from "@/components/kanban/KanbanBoard";
+import { exportTasksToExcel } from "@/utils/exportToExcel";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const isMobile = useIsMobile();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -41,6 +40,7 @@ const Index = () => {
           timeSpent: record.timeSpent || 0,
           notes: record.notes || "",
           createdAt: record.created_at || new Date().toISOString(),
+          customFields: record.custom_fields || {},
         }));
         
         setTasks(formattedTasks);
@@ -73,6 +73,7 @@ const Index = () => {
       const newTask: Task = {
         ...task,
         id: uuidv4(),
+        createdAt: new Date().toISOString(),
       };
 
       const { error } = await supabase.from("desk_table").insert({
@@ -84,6 +85,7 @@ const Index = () => {
         taskType: newTask.taskType,
         timeSpent: newTask.timeSpent,
         notes: newTask.notes,
+        custom_fields: newTask.customFields || {},
       });
 
       if (error) throw error;
@@ -94,8 +96,6 @@ const Index = () => {
         title: "Success",
         description: "Task saved successfully",
       });
-      
-      navigate('/dashboard');
     } catch (error: any) {
       console.error("Error saving task:", error.message);
       toast({
@@ -106,9 +106,71 @@ const Index = () => {
     }
   };
 
+  const handleUpdateTask = async (updatedTask: Task) => {
+    try {
+      const { error } = await supabase
+        .from("desk_table")
+        .update({
+          task_date: updatedTask.date,
+          project: updatedTask.project,
+          taskName: updatedTask.taskName,
+          taskType: updatedTask.taskType,
+          timeSpent: updatedTask.timeSpent,
+          notes: updatedTask.notes,
+          custom_fields: updatedTask.customFields || {},
+        })
+        .eq("task_id", updatedTask.id);
+        
+      if (error) throw error;
+      
+      setTasks(prevTasks => 
+        prevTasks.map(task => 
+          task.id === updatedTask.id ? updatedTask : task
+        )
+      );
+      
+      toast({
+        title: "Success",
+        description: "Task updated successfully",
+      });
+    } catch (error: any) {
+      console.error("Error updating task:", error.message);
+      toast({
+        title: "Error",
+        description: "Failed to update task",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      const { error } = await supabase
+        .from("desk_table")
+        .delete()
+        .eq("task_id", taskId);
+        
+      if (error) throw error;
+      
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+      
+      toast({
+        title: "Success",
+        description: "Task deleted successfully",
+      });
+    } catch (error: any) {
+      console.error("Error deleting task:", error.message);
+      toast({
+        title: "Error",
+        description: "Failed to delete task",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleExport = () => {
     try {
-      exportToExcel(tasks, "design_tasks");
+      exportTasksToExcel(tasks, "design_tasks");
       toast({
         title: "Success",
         description: "Tasks exported to Excel successfully",
@@ -123,27 +185,26 @@ const Index = () => {
     }
   };
 
-  const today = new Date();
-  const todaysTasks = tasks.filter(
-    (task) => new Date(task.date).toDateString() === today.toDateString()
-  );
-  const totalHoursToday = todaysTasks.reduce(
-    (total, task) => total + task.timeSpent,
-    0
-  );
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-64">
+          <p>Loading tasks...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout onExport={handleExport}>
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-3 lg:col-span-2">
-          <TaskForm onSaveTask={handleSaveTask} />
-        </div>
-        
-        <div className="md:col-span-3 lg:col-span-1">
-          <DailySummary 
-            tasks={todaysTasks}
-          />
-        </div>
+      <div className="w-full">
+        <h1 className="text-2xl font-bold mb-6">Activity Board</h1>
+        <KanbanBoard 
+          tasks={tasks}
+          onUpdateTask={handleUpdateTask}
+          onDeleteTask={handleDeleteTask}
+          onAddTask={handleSaveTask}
+        />
       </div>
     </Layout>
   );
