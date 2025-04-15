@@ -1,5 +1,5 @@
+
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import KanbanColumn from "@/components/kanban/KanbanColumn";
 import KanbanTask from "@/components/kanban/KanbanTask";
 import { Task } from "@/types/task";
@@ -8,7 +8,6 @@ import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TaskForm from "@/components/TaskForm";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { v4 as uuidv4 } from "uuid";
 import TaskDetailsDialog from "@/components/kanban/TaskDetailsDialog";
@@ -181,6 +180,21 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
     }
   };
 
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, status: KanbanStatus) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData("taskId");
+    
+    if (taskId) {
+      handleStatusChange(taskId, status);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -194,6 +208,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
             setActiveColumn("backlog");
             setShowTaskForm(true);
           }}
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, "backlog")}
         >
           {getColumnTasks("backlog").map((task) => (
             <KanbanTask 
@@ -215,6 +231,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
             setActiveColumn("progress");
             setShowTaskForm(true);
           }}
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, "progress")}
         >
           {getColumnTasks("progress").map((task) => (
             <KanbanTask 
@@ -236,6 +254,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
             setActiveColumn("done");
             setShowTaskForm(true);
           }}
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, "done")}
         >
           {getColumnTasks("done").map((task) => (
             <KanbanTask 

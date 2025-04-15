@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format, parseISO } from "date-fns";
@@ -15,8 +15,20 @@ interface KanbanTaskProps {
 }
 
 const KanbanTask: React.FC<KanbanTaskProps> = ({ task, onClick, onStatusChange }) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("taskId", task.id);
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4" 
+    <Card 
+      className={`shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4 ${isDragging ? 'shadow-lg ring-2 ring-primary/20' : ''}`} 
       style={{ 
         borderLeftColor: task.status === "backlog" 
           ? "#94a3b8" 
@@ -25,6 +37,9 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, onClick, onStatusChange }
             : "#22c55e" 
       }}
       onClick={onClick}
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
       <CardContent className="p-3">
         <div className="flex flex-col space-y-2">
